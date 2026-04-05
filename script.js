@@ -1,5 +1,4 @@
 const defaultConfig = {
-  heroImageUrl: "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1920&q=80",
   extraImages: [
     "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1920&q=80"
   ],
@@ -25,6 +24,16 @@ const defaultConfig = {
   timerDisplayMode: "floating"
 };
 
+const FONT_PRESETS = {
+  bebas: '"Bebas Neue", sans-serif',
+  orbitron: '"Orbitron", sans-serif',
+  oswald: '"Oswald", sans-serif',
+  space: '"Space Grotesk", sans-serif',
+  montserrat: '"Montserrat", sans-serif',
+  playfair: '"Playfair Display", serif',
+  syncopate: '"Syncopate", sans-serif'
+};
+
 const state = {
   config: loadConfig(),
   isRunning: false,
@@ -33,15 +42,7 @@ const state = {
   tickHandle: null
 };
 
-const FONT_PRESETS = {
-  bebas: '"Bebas Neue", sans-serif',
-  orbitron: '"Orbitron", sans-serif',
-  oswald: '"Oswald", sans-serif',
-  space: '"Space Grotesk", sans-serif'
-};
-
 const refs = {
-  heroFixed: document.getElementById("heroFixed"),
   galleryList: document.getElementById("galleryList"),
   timerCard: document.getElementById("timerCard"),
   timerLabel: document.getElementById("timerLabel"),
@@ -55,12 +56,11 @@ const refs = {
   inlineTimerMount: document.getElementById("inlineTimerMount"),
   shareBtn: document.getElementById("shareBtn"),
   extraImagesContainer: document.getElementById("extraImagesContainer"),
-  addImageBtn: document.getElementById("addImageBtn")
+  addImageBtn: document.getElementById("addImageBtn"),
+  hideTimerBtn: document.getElementById("hideTimerBtn")
 };
 
 const fields = {
-  heroImageUrl: document.getElementById("heroImageUrl"),
-  heroImageFile: document.getElementById("heroImageFile"),
   imageHostingProvider: document.getElementById("imageHostingProvider"),
   autoHostUploads: document.getElementById("autoHostUploads"),
   imageHostingApiKey: document.getElementById("imageHostingApiKey"),
@@ -107,6 +107,12 @@ function initialize() {
   if (refs.settingsForm) {
     refs.settingsForm.addEventListener("submit", onApplySettings);
   }
+
+  // Bridge for the inline script's Apply button
+  window.applySettingsFromPanel = () => {
+    void onApplySettings();
+  };
+
   if (refs.shareBtn) {
     refs.shareBtn.addEventListener("click", copyShareLink);
   }
@@ -118,9 +124,12 @@ function initialize() {
     refs.extraImagesContainer.addEventListener("change", onImagesContainerChange);
   }
 
-  if (fields.heroImageFile && fields.heroImageUrl) {
-    fields.heroImageFile.addEventListener("change", (event) => {
-      void onFileSelected(event, fields.heroImageUrl);
+  // Hide/show timer toggle
+  if (refs.hideTimerBtn && refs.timerCard) {
+    refs.hideTimerBtn.addEventListener("click", () => {
+      const isHidden = refs.timerCard.classList.toggle("hidden");
+      refs.hideTimerBtn.style.opacity = isHidden ? "0.5" : "";
+      refs.hideTimerBtn.title = isHidden ? "Show Timer" : "Hide Timer";
     });
   }
 }
@@ -171,7 +180,7 @@ function parseConfigFromQuery() {
   try {
     const json = atob(encoded);
     const parsed = JSON.parse(json);
-    window.localStorage.setItem("hackathon-display-config", JSON.stringify(parsed));
+    safeStoreConfig(parsed);
     return parsed;
   } catch {
     return null;
@@ -179,11 +188,22 @@ function parseConfigFromQuery() {
 }
 
 function saveConfig() {
-  window.localStorage.setItem("hackathon-display-config", JSON.stringify(state.config));
+  safeStoreConfig(state.config);
+}
+
+function safeStoreConfig(config) {
+  try {
+    window.localStorage.setItem("hackathon-display-config", JSON.stringify(config));
+  } catch {
+    try {
+      window.sessionStorage.setItem("hackathon-display-config", JSON.stringify(config));
+    } catch {
+      // Ignore storage failures so Apply still updates the view.
+    }
+  }
 }
 
 function hydrateForm() {
-  if (fields.heroImageUrl) fields.heroImageUrl.value = state.config.heroImageUrl;
   if (fields.imageHostingProvider) fields.imageHostingProvider.value = state.config.imageHostingProvider;
   if (fields.autoHostUploads) fields.autoHostUploads.value = state.config.autoHostUploads ? "on" : "off";
   if (fields.imageHostingApiKey) fields.imageHostingApiKey.value = state.config.imageHostingApiKey;
@@ -417,9 +437,6 @@ function formatDuration(seconds) {
 }
 
 function applyConfigToView() {
-  if (refs.heroFixed) {
-    refs.heroFixed.style.backgroundImage = `url('${state.config.heroImageUrl}')`;
-  }
   renderGallery();
   applyTimerAppearance();
   placeTimerCard();
@@ -491,21 +508,13 @@ function placeTimerCard() {
 }
 
 async function onApplySettings(event) {
-  event.preventDefault();
+  if (event && typeof event.preventDefault === "function") {
+    event.preventDefault();
+  }
 
   const autoHostUploads = fields.autoHostUploads ? fields.autoHostUploads.value === "on" : state.config.autoHostUploads;
   const imageHostingApiKey = fields.imageHostingApiKey ? fields.imageHostingApiKey.value.trim() : state.config.imageHostingApiKey;
   const imageHostingProvider = fields.imageHostingProvider ? fields.imageHostingProvider.value : state.config.imageHostingProvider;
-
-  let heroImageUrl = fields.heroImageUrl ? fields.heroImageUrl.value.trim() || defaultConfig.heroImageUrl : state.config.heroImageUrl;
-  if (fields.heroImageFile?.files?.[0] && fields.heroImageUrl) {
-    heroImageUrl = await resolveHostedImageUrl(fields.heroImageFile.files[0], fields.heroImageUrl.value, {
-      autoHostUploads,
-      imageHostingProvider,
-      imageHostingApiKey
-    });
-    fields.heroImageUrl.value = heroImageUrl;
-  }
 
   const extraRows = collectImageRowsFromForm();
   const resolvedExtraImages = [];
@@ -514,7 +523,7 @@ async function onApplySettings(event) {
       continue;
     }
 
-    const file = row.fileInput.files?.[0];
+    const file = row.fileInput.files && row.fileInput.files[0];
     if (file) {
       const resolved = await resolveHostedImageUrl(file, row.urlInput.value, {
         autoHostUploads,
@@ -532,7 +541,6 @@ async function onApplySettings(event) {
 
   state.config = {
     ...state.config,
-    heroImageUrl,
     extraImages: resolvedExtraImages,
     imageHostingProvider,
     autoHostUploads,
@@ -566,7 +574,6 @@ async function onApplySettings(event) {
 
 function copyShareLink() {
   const payload = {
-    heroImageUrl: state.config.heroImageUrl,
     extraImages: state.config.extraImages,
     imageHostingProvider: state.config.imageHostingProvider,
     autoHostUploads: state.config.autoHostUploads,
@@ -614,13 +621,40 @@ function setPanelOpen(isOpen) {
   }
 }
 
+function handleDocumentClick(event) {
+  if (!refs.settingsPanel || !refs.toggleSettingsBtn) {
+    return;
+  }
+
+  if (!refs.settingsPanel.classList.contains("open")) {
+    return;
+  }
+
+  const target = event.target;
+  if (!(target instanceof Node)) {
+    return;
+  }
+
+  if (refs.settingsPanel.contains(target) || refs.toggleSettingsBtn.contains(target)) {
+    return;
+  }
+
+  setPanelOpen(false);
+}
+
+function handleDocumentKeydown(event) {
+  if (event.key === "Escape") {
+    setPanelOpen(false);
+  }
+}
+
 async function onFileSelected(event, targetField) {
   const input = event.target;
   if (!(input instanceof HTMLInputElement)) {
     return;
   }
 
-  const file = input.files?.[0];
+  const file = input.files && input.files[0];
   if (!file) {
     return;
   }
@@ -646,8 +680,7 @@ async function resolveHostedImageUrl(file, existingValue, options) {
     }
   }
 
-  // If a file was provided, always convert it to DataURL (don't fall back to existing value)
-  // The file parameter means the user is actively trying to add/replace an image
+  // If a file was provided, always convert it to DataURL
   return await fileToDataUrl(file);
 }
 

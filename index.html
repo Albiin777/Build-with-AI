@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hackathon Sponsor Board</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&family=Orbitron:wght@500;700&family=Oswald:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260405b" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&family=Orbitron:wght@500;700&family=Oswald:wght@400;600&family=Montserrat:wght@700;900&family=Playfair+Display:wght@700;900&family=Syncopate:wght@700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20260405c" />
 </head>
-<body>
-  <div class="hero-fixed" id="heroFixed" aria-hidden="true"></div>
 
+<body>
   <div class="timer-card" id="timerCard" role="status" aria-live="polite">
     <p class="timer-label" id="timerLabel">Hackathon Timer</p>
     <p class="timer-value" id="timerValue">00:00:00</p>
@@ -22,7 +24,6 @@
   </div>
 
   <main>
-    <section class="hero-spacer" aria-hidden="true"></section>
 
     <section class="gallery-shell" id="galleryShell">
       <div class="inline-timer-mount" id="inlineTimerMount"></div>
@@ -30,8 +31,13 @@
     </section>
   </main>
 
-  <button id="toggleSettingsBtn" class="settings-toggle" type="button" aria-expanded="false" aria-controls="settingsPanel">
-    Customize View
+  <button id="toggleSettingsBtn" class="settings-toggle" type="button" aria-expanded="false"
+    aria-controls="settingsPanel" title="Customize View">
+    &#128065;
+  </button>
+
+  <button id="hideTimerBtn" class="hide-timer-toggle" type="button" title="Hide / Show Timer">
+    &#128065;
   </button>
 
   <aside id="settingsPanel" class="settings-panel" aria-hidden="true">
@@ -41,14 +47,6 @@
     </div>
 
     <form id="settingsForm">
-      <label>
-        Main fullscreen image URL
-        <input type="url" id="heroImageUrl" placeholder="https://..." />
-      </label>
-      <label>
-        Or upload main image
-        <input type="file" id="heroImageFile" accept="image/*" />
-      </label>
 
       <div class="split-grid">
         <label>
@@ -136,6 +134,9 @@
             <option value="orbitron">Orbitron</option>
             <option value="oswald">Oswald</option>
             <option value="space">Space Grotesk</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="playfair">Playfair Display</option>
+            <option value="syncopate">Syncopate</option>
           </select>
         </label>
         <label>
@@ -145,6 +146,9 @@
             <option value="oswald">Oswald</option>
             <option value="bebas">Bebas Neue</option>
             <option value="orbitron">Orbitron</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="playfair">Playfair Display</option>
+            <option value="syncopate">Syncopate</option>
           </select>
         </label>
       </div>
@@ -181,7 +185,7 @@
       </div>
 
       <div class="panel-actions">
-        <button type="submit">Apply</button>
+        <button type="button" id="applySettingsBtn">Apply</button>
         <button type="button" id="shareBtn" class="ghost">Copy shareable link</button>
       </div>
     </form>
@@ -192,15 +196,29 @@
       var panel = document.getElementById("settingsPanel");
       var openBtn = document.getElementById("toggleSettingsBtn");
       var closeBtn = document.getElementById("closeSettingsBtn");
+      var applyBtn = document.getElementById("applySettingsBtn");
+      var form = document.getElementById("settingsForm");
 
       if (!panel || !openBtn || !closeBtn) {
         return;
+      }
+
+      function applySettings() {
+        if (typeof window.applySettingsFromPanel === "function") {
+          window.applySettingsFromPanel();
+          return;
+        }
+
+        if (form) {
+          form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        }
       }
 
       function setOpen(next) {
         panel.classList.toggle("open", next);
         panel.setAttribute("aria-hidden", String(!next));
         openBtn.setAttribute("aria-expanded", String(next));
+        // Remove openBtn.hidden = next to keep button visible
       }
 
       openBtn.addEventListener("click", function () {
@@ -210,8 +228,31 @@
       closeBtn.addEventListener("click", function () {
         setOpen(false);
       });
+
+      if (applyBtn) {
+        applyBtn.addEventListener("click", applySettings);
+      }
+
+      document.addEventListener("click", function (event) {
+        if (!panel.classList.contains("open")) {
+          return;
+        }
+
+        if (panel.contains(event.target) || openBtn.contains(event.target)) {
+          return;
+        }
+
+        setOpen(false);
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          setOpen(false);
+        }
+      });
     })();
   </script>
-  <script src="script.js?v=20260405b"></script>
+  <script src="script.js?v=20260405c"></script>
 </body>
+
 </html>

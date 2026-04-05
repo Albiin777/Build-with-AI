@@ -24,30 +24,10 @@ body {
   overflow-y: auto;
 }
 
-.hero-fixed {
-  position: fixed;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  z-index: -2;
-}
-
-.hero-fixed::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(15, 28, 46, 0.12), rgba(15, 28, 46, 0.8)),
-    linear-gradient(160deg, rgba(10, 21, 36, 0.1), rgba(8, 14, 22, 0.78));
-}
-
 main {
   position: relative;
   z-index: 1;
-}
-
-.hero-spacer {
-  min-height: 100vh;
+  padding: 1rem 0;
 }
 
 .gallery-shell {
@@ -102,6 +82,9 @@ main {
   line-height: 1;
   color: #ffffff;
   white-space: nowrap;
+  min-width: 320px;
+  display: inline-block;
+  text-align: center;
 }
 
 .timer-actions {
@@ -152,8 +135,53 @@ button:hover {
   bottom: 18px;
   right: 18px;
   z-index: 2000;
-  box-shadow: var(--shadow);
   pointer-events: auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.12);
+  font-size: 14px;
+  line-height: 28px;
+  text-align: center;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: opacity 0.3s ease;
+  opacity: 0.25;
+}
+
+.settings-toggle:hover {
+  opacity: 0.7;
+}
+
+/* Hide-timer toggle in top-right */
+.hide-timer-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 2000;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+  transition: all 0.3s ease;
+  opacity: 0.2;
+  pointer-events: auto;
+}
+
+.hide-timer-toggle:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .settings-panel {
@@ -190,7 +218,7 @@ button:hover {
 
 .settings-panel form {
   display: grid;
-  gap: 0.85rem;
+  gap: 1.2rem;
 }
 
 .images-builder {
@@ -212,18 +240,19 @@ button:hover {
   justify-content: flex-end;
 }
 
-.settings-panel label {
-  display: grid;
-  gap: 0.35rem;
-  font-size: 0.9rem;
-}
-
 .settings-panel input,
 .settings-panel select {
   border: 1px solid rgba(24, 34, 45, 0.2);
   border-radius: 10px;
   padding: 0.55rem 0.65rem;
   background: #fff;
+  width: 100%;
+}
+
+.settings-panel label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.9rem;
 }
 
 .check-row {
