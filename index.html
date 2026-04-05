@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hackathon Sponsor Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&family=Orbitron:wght@500;700&family=Oswald:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20260405b" />
+</head>
+<body>
+  <div class="hero-fixed" id="heroFixed" aria-hidden="true"></div>
+
+  <div class="timer-card" id="timerCard" role="status" aria-live="polite">
+    <p class="timer-label" id="timerLabel">Hackathon Timer</p>
+    <p class="timer-value" id="timerValue">00:00:00</p>
+    <div class="timer-actions hidden" aria-hidden="true">
+      <button id="startPauseBtn" type="button">Start</button>
+      <button id="resetBtn" type="button" class="ghost">Reset</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero-spacer" aria-hidden="true"></section>
+
+    <section class="gallery-shell" id="galleryShell">
+      <div class="inline-timer-mount" id="inlineTimerMount"></div>
+      <div id="galleryList" class="gallery-list"></div>
+    </section>
+  </main>
+
+  <button id="toggleSettingsBtn" class="settings-toggle" type="button" aria-expanded="false" aria-controls="settingsPanel">
+    Customize View
+  </button>
+
+  <aside id="settingsPanel" class="settings-panel" aria-hidden="true">
+    <div class="settings-head">
+      <h2>Display Settings</h2>
+      <button id="closeSettingsBtn" type="button" class="ghost">Close</button>
+    </div>
+
+    <form id="settingsForm">
+      <label>
+        Main fullscreen image URL
+        <input type="url" id="heroImageUrl" placeholder="https://..." />
+      </label>
+      <label>
+        Or upload main image
+        <input type="file" id="heroImageFile" accept="image/*" />
+      </label>
+
+      <div class="split-grid">
+        <label>
+          Image hosting
+          <select id="imageHostingProvider">
+            <option value="imgbb">ImgBB</option>
+          </select>
+        </label>
+        <label>
+          Auto host uploads
+          <select id="autoHostUploads">
+            <option value="on">On</option>
+            <option value="off">Off</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        ImgBB API key
+        <input type="password" id="imageHostingApiKey" placeholder="Enter ImgBB API key" autocomplete="off" />
+      </label>
+
+      <div id="extraImagesContainer" class="images-builder"></div>
+      <button type="button" id="addImageBtn" class="ghost">Add image</button>
+
+      <hr />
+
+      <label>
+        Timer title
+        <input type="text" id="timerTitle" maxlength="40" placeholder="Hackathon Timer" />
+      </label>
+
+      <div class="split-grid">
+        <label>
+          Hours
+          <input type="number" id="timerHours" min="0" max="999" value="0" />
+        </label>
+        <label>
+          Minutes
+          <input type="number" id="timerMinutes" min="0" max="59" value="0" />
+        </label>
+        <label>
+          Seconds
+          <input type="number" id="timerSeconds" min="0" max="59" value="0" />
+        </label>
+      </div>
+
+      <label>
+        Timer type
+        <select id="timerType">
+          <option value="countdown">Countdown</option>
+          <option value="stopwatch">Stopwatch</option>
+        </select>
+      </label>
+
+      <label>
+        Timer display
+        <select id="timerDisplayMode">
+          <option value="floating">Floating (on top of page)</option>
+          <option value="inline">Inside page</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </label>
+
+      <div class="split-grid">
+        <label>
+          Timer value color
+          <input type="color" id="timerTextColor" value="#ffffff" />
+        </label>
+        <label>
+          Timer title color
+          <input type="color" id="timerLabelColor" value="#d1d5db" />
+        </label>
+        <label>
+          Timer value size (px)
+          <input type="number" id="timerValueSize" min="28" max="220" value="72" />
+        </label>
+      </div>
+
+      <div class="split-grid">
+        <label>
+          Timer value font
+          <select id="timerValueFont">
+            <option value="bebas">Bebas Neue</option>
+            <option value="orbitron">Orbitron</option>
+            <option value="oswald">Oswald</option>
+            <option value="space">Space Grotesk</option>
+          </select>
+        </label>
+        <label>
+          Timer title font
+          <select id="timerLabelFont">
+            <option value="space">Space Grotesk</option>
+            <option value="oswald">Oswald</option>
+            <option value="bebas">Bebas Neue</option>
+            <option value="orbitron">Orbitron</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="split-grid">
+        <label>
+          Box background color
+          <input type="color" id="timerBoxColor" value="#000000" />
+        </label>
+        <label>
+          Box background opacity
+          <input type="number" id="timerBoxOpacity" min="0" max="100" value="0" />
+        </label>
+        <label>
+          Border color
+          <input type="color" id="timerBorderColor" value="#ffffff" />
+        </label>
+      </div>
+
+      <label>
+        Border opacity
+        <input type="number" id="timerBorderOpacity" min="0" max="100" value="0" />
+      </label>
+
+      <div class="split-grid">
+        <label>
+          Horizontal offset (px)
+          <input type="number" id="offsetX" min="-500" max="500" step="1" value="0" />
+        </label>
+        <label>
+          Vertical offset (px)
+          <input type="number" id="offsetY" min="-500" max="500" step="1" value="0" />
+        </label>
+      </div>
+
+      <div class="panel-actions">
+        <button type="submit">Apply</button>
+        <button type="button" id="shareBtn" class="ghost">Copy shareable link</button>
+      </div>
+    </form>
+  </aside>
+
+  <script>
+    (function () {
+      var panel = document.getElementById("settingsPanel");
+      var openBtn = document.getElementById("toggleSettingsBtn");
+      var closeBtn = document.getElementById("closeSettingsBtn");
+
+      if (!panel || !openBtn || !closeBtn) {
+        return;
+      }
+
+      function setOpen(next) {
+        panel.classList.toggle("open", next);
+        panel.setAttribute("aria-hidden", String(!next));
+        openBtn.setAttribute("aria-expanded", String(next));
+      }
+
+      openBtn.addEventListener("click", function () {
+        setOpen(true);
+      });
+
+      closeBtn.addEventListener("click", function () {
+        setOpen(false);
+      });
+    })();
+  </script>
+  <script src="script.js?v=20260405b"></script>
+</body>
+</html>

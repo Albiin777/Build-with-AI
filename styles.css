@@ -1,0 +1,272 @@
+:root {
+  --bg: #0f1c2e;
+  --panel: #f7efe3;
+  --ink: #18222d;
+  --accent: #e45430;
+  --accent-dark: #b93e22;
+  --soft: #fff5e8;
+  --shadow: 0 18px 48px rgba(7, 18, 35, 0.24);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.hero-fixed {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: -2;
+}
+
+.hero-fixed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(15, 28, 46, 0.12), rgba(15, 28, 46, 0.8)),
+    linear-gradient(160deg, rgba(10, 21, 36, 0.1), rgba(8, 14, 22, 0.78));
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-spacer {
+  min-height: 100vh;
+}
+
+.gallery-shell {
+  padding: 0;
+  min-height: 40vh;
+}
+
+.gallery-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+
+.timer-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  width: fit-content;
+  max-width: calc(100% - 2rem);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 0.9rem;
+  box-shadow: none;
+  text-align: center;
+  pointer-events: none;
+}
+
+.timer-label {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d1d5db;
+}
+
+.timer-value {
+  margin: 0.35rem 0 0.8rem;
+  font-size: clamp(2.8rem, 10vw, 4.8rem);
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.timer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.inline-timer-mount {
+  margin-bottom: 1rem;
+}
+
+.inline-timer-mount:empty {
+  display: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  background: var(--accent);
+  color: #fff;
+}
+
+button:hover {
+  background: var(--accent-dark);
+}
+
+.ghost {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid rgba(24, 34, 45, 0.2);
+}
+
+.ghost:hover {
+  background: #f5f5f5;
+}
+
+.settings-toggle {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 2000;
+  box-shadow: var(--shadow);
+  pointer-events: auto;
+}
+
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(420px, 100%);
+  z-index: 50;
+  background: #fffaf2;
+  transform: translateX(102%);
+  transition: transform 220ms ease;
+  border-left: 1px solid rgba(24, 34, 45, 0.15);
+  overflow-y: auto;
+  padding: 1.2rem;
+  pointer-events: none;
+}
+
+.settings-panel.open {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.settings-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+
+.settings-head h2 {
+  margin: 0;
+}
+
+.settings-panel form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.images-builder {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.image-row {
+  display: grid;
+  gap: 0.5rem;
+  border: 1px solid rgba(24, 34, 45, 0.15);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem;
+}
+
+.row-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.settings-panel label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.settings-panel input,
+.settings-panel select {
+  border: 1px solid rgba(24, 34, 45, 0.2);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  background: #fff;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.check-row input {
+  width: auto;
+}
+
+.split-grid {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.panel-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(24, 34, 45, 0.15);
+  margin: 0.2rem 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .split-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .timer-card {
+    max-width: calc(100% - 1rem);
+  }
+
+  .panel-actions {
+    flex-wrap: wrap;
+  }
+}
