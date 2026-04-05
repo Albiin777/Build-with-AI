@@ -7,7 +7,7 @@ const defaultConfig = {
   imageHostingApiKey: "",
   timerTitle: "Hackathon Timer",
   timerType: "countdown",
-  hours: 6,
+  hours: 16,
   minutes: 0,
   seconds: 0,
   timerValueFont: "bebas",
@@ -22,7 +22,7 @@ const defaultConfig = {
   timerBorderOpacity: 0,
   offsetX: 0,
   offsetY: 0,
-  timerDisplayMode: "floating"
+  timerDisplayMode: "hidden"
 };
 
 const FONT_PRESETS = {
@@ -98,7 +98,6 @@ function initialize() {
   hydrateForm();
   resetTimerState();
   applyConfigToView();
-  startTimer();
 
   if (refs.startPauseBtn) {
     refs.startPauseBtn.addEventListener("click", onStartPause);
@@ -128,6 +127,10 @@ function initialize() {
 
   // Hide/show timer toggle
   if (refs.hideTimerBtn && refs.timerCard) {
+    const isInitiallyHidden = state.config.timerDisplayMode === "hidden";
+    if (isInitiallyHidden) {
+      refs.hideTimerBtn.style.opacity = "0.3";
+    }
     refs.hideTimerBtn.addEventListener("click", () => {
       const isHidden = refs.timerCard.classList.toggle("hidden");
       refs.hideTimerBtn.style.opacity = isHidden ? "0.3" : "";
@@ -488,28 +491,13 @@ function placeTimerCard() {
 
   refs.timerCard.classList.remove("hidden");
 
-  if (state.config.timerDisplayMode === "hidden") {
-    refs.timerCard.classList.add("hidden");
-    return;
-  }
-
-  if (state.config.timerDisplayMode === "inline") {
-    refs.timerCard.style.position = "static";
-    refs.timerCard.style.right = "auto";
-    refs.timerCard.style.left = "auto";
-    refs.timerCard.style.top = "auto";
-    refs.timerCard.style.transform = "none";
-    refs.inlineTimerMount.appendChild(refs.timerCard);
-    return;
-  }
-
-  refs.timerCard.style.position = "fixed";
-  refs.timerCard.style.left = "50%";
-  refs.timerCard.style.top = "auto";
-  refs.timerCard.style.bottom = "20px";
   refs.timerCard.style.right = "auto";
   refs.timerCard.style.transform = `translate(calc(-50% + ${toNumber(state.config.offsetX)}px), ${-toNumber(state.config.offsetY)}px)`;
   document.body.appendChild(refs.timerCard);
+
+  if (state.config.timerDisplayMode === "hidden") {
+    refs.timerCard.classList.add("hidden");
+  }
 }
 
 async function onApplySettings(event) {
@@ -573,7 +561,6 @@ async function onApplySettings(event) {
   saveConfig();
   resetTimerState();
   applyConfigToView();
-  startTimer();
   renderImageRows(state.config.extraImages);
   setPanelOpen(false);
 }
