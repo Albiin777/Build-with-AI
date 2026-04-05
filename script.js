@@ -1,6 +1,6 @@
 const defaultConfig = {
   extraImages: [
-    "https://i.ibb.co/d04vjHB5/reopen-5-jpg.jpg"
+    "https://ibb.co/wNhqB2yz"
   ],
   imageHostingProvider: "imgbb",
   autoHostUploads: true,
