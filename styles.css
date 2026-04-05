@@ -1,5 +1,5 @@
 :root {
-  --bg: #0f1c2e;
+  --bg: #ffffff;
   --panel: #f7efe3;
   --ink: #18222d;
   --accent: #e45430;
@@ -38,7 +38,7 @@ main {
 .gallery-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0;
 }
 
 .gallery-item {
@@ -47,6 +47,7 @@ main {
   object-fit: cover;
   display: block;
   background: #000;
+  margin: 4px 0 2px 0;
 }
 
 .timer-card {

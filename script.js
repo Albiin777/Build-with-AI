@@ -15,7 +15,7 @@ const defaultConfig = {
   timerTextColor: "#000000",
   timerLabelColor: "#000000",
   timerValueSize: 150,
-  timerLabelSize: 16,
+  timerLabelSize: 24,
   timerBoxColor: "#000000",
   timerBoxOpacity: 0,
   timerBorderColor: "#ffffff",
