@@ -40,7 +40,8 @@ const state = {
   isRunning: false,
   remainingSeconds: 0,
   elapsedSeconds: 0,
-  tickHandle: null
+  tickHandle: null,
+  isStatusLoaded: false
 };
 
 const refs = {
@@ -58,7 +59,9 @@ const refs = {
   shareBtn: document.getElementById("shareBtn"),
   extraImagesContainer: document.getElementById("extraImagesContainer"),
   addImageBtn: document.getElementById("addImageBtn"),
-  hideTimerBtn: document.getElementById("hideTimerBtn")
+  hideTimerBtn: document.getElementById("hideTimerBtn"),
+  capsuleStartBtn: document.getElementById("capsuleStartBtn"),
+  capsuleEditBtn: document.getElementById("capsuleEditBtn")
 };
 
 const fields = {
@@ -97,6 +100,7 @@ function initialize() {
 
   hydrateForm();
   resetTimerState();
+  loadTimerStatus(); // Restore progress if any
   applyConfigToView();
 
   if (refs.startPauseBtn) {
@@ -136,6 +140,14 @@ function initialize() {
       refs.hideTimerBtn.style.opacity = isHidden ? "0.3" : "";
       refs.hideTimerBtn.title = isHidden ? "Show Timer" : "Hide Timer";
     });
+  }
+
+  // Capsule listeners
+  if (refs.capsuleStartBtn) {
+    refs.capsuleStartBtn.addEventListener("click", onStartPause);
+  }
+  if (refs.capsuleEditBtn) {
+    refs.capsuleEditBtn.addEventListener("click", () => setPanelOpen(true));
   }
 }
 
@@ -203,8 +215,51 @@ function safeStoreConfig(config) {
     try {
       window.sessionStorage.setItem("hackathon-display-config", JSON.stringify(config));
     } catch {
-      // Ignore storage failures so Apply still updates the view.
+      // Ignore storage failures
     }
+  }
+}
+
+function saveTimerStatus() {
+  try {
+    const status = {
+      remainingSeconds: state.remainingSeconds,
+      elapsedSeconds: state.elapsedSeconds,
+      isRunning: state.isRunning,
+      lastUpdate: Date.now()
+    };
+    window.localStorage.setItem("hackathon-timer-status", JSON.stringify(status));
+  } catch {
+    // Ignore
+  }
+}
+
+function loadTimerStatus() {
+  try {
+    const stored = window.localStorage.getItem("hackathon-timer-status");
+    if (!stored) return;
+    const status = JSON.parse(stored);
+    
+    // If it was running, calculate how much time passed while away
+    if (status.isRunning) {
+      const msPassed = Date.now() - status.lastUpdate;
+      const secondsPassed = Math.floor(msPassed / 1000);
+      
+      state.remainingSeconds = Math.max(0, status.remainingSeconds - secondsPassed);
+      state.elapsedSeconds = status.elapsedSeconds + secondsPassed;
+      state.isRunning = true;
+      state.tickHandle = setInterval(onTick, 1000);
+      if (refs.startPauseBtn) refs.startPauseBtn.textContent = "Pause";
+      if (refs.capsuleStartBtn) refs.capsuleStartBtn.textContent = "Pause";
+    } else {
+      state.remainingSeconds = status.remainingSeconds;
+      state.elapsedSeconds = status.elapsedSeconds;
+      state.isRunning = false;
+      if (refs.capsuleStartBtn) refs.capsuleStartBtn.textContent = "Start";
+    }
+    state.isStatusLoaded = true;
+  } catch {
+    // Ignore
   }
 }
 
@@ -349,6 +404,9 @@ function resetTimerState() {
   if (refs.startPauseBtn) {
     refs.startPauseBtn.textContent = "Start";
   }
+  if (refs.capsuleStartBtn) {
+    refs.capsuleStartBtn.textContent = "Start";
+  }
   updateTimerText();
 }
 
@@ -366,7 +424,11 @@ function onStartPause() {
     if (refs.startPauseBtn) {
       refs.startPauseBtn.textContent = "Pause";
     }
+    if (refs.capsuleStartBtn) {
+      refs.capsuleStartBtn.textContent = "Pause";
+    }
     state.tickHandle = setInterval(onTick, 1000);
+    saveTimerStatus();
     return;
   }
 
@@ -374,10 +436,14 @@ function onStartPause() {
   if (refs.startPauseBtn) {
     refs.startPauseBtn.textContent = "Start";
   }
+  if (refs.capsuleStartBtn) {
+    refs.capsuleStartBtn.textContent = "Start";
+  }
   if (state.tickHandle) {
     clearInterval(state.tickHandle);
     state.tickHandle = null;
   }
+  saveTimerStatus();
 }
 
 function onTick() {
@@ -391,9 +457,11 @@ function onTick() {
   }
 
   updateTimerText();
+  saveTimerStatus();
 }
 
 function onResetTimer() {
+  window.localStorage.removeItem("hackathon-timer-status");
   resetTimerState();
 }
 
@@ -418,10 +486,14 @@ function stopRunningTimer() {
   if (refs.startPauseBtn) {
     refs.startPauseBtn.textContent = "Start";
   }
+  if (refs.capsuleStartBtn) {
+    refs.capsuleStartBtn.textContent = "Start";
+  }
   if (state.tickHandle) {
     clearInterval(state.tickHandle);
     state.tickHandle = null;
   }
+  saveTimerStatus();
 }
 
 function updateTimerText() {

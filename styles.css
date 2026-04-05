@@ -133,27 +133,85 @@ button:hover {
 
 .settings-toggle {
   position: fixed;
-  bottom: 18px;
-  right: 18px;
+  bottom: 0.8rem;
+  right: 0.8rem;
   z-index: 2000;
   pointer-events: auto;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border-radius: 50%;
-  background: rgba(247, 186, 164, 0.542);
+  background: rgba(228, 84, 48, 0.4);
   color: #fff;
-  font-size: 16px;
-  line-height: 32px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  opacity: 0.75;
+  opacity: 0.45;
+}
+
+.settings-toggle::after {
+  content: "⚙";
+  font-size: 14px;
 }
 
 .settings-toggle:hover {
-  opacity: 0.2;
+  opacity: 1;
+  background: rgba(228, 84, 48, 0.7);
+}
+
+.master-capsule {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2005;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 60px;
+  padding: 5px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  pointer-events: auto;
+  opacity: 0.35;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.master-capsule:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.capsule-btn {
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 6px 16px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.25s ease;
+  opacity: 0.7;
+}
+
+.capsule-btn:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.capsule-btn.primary {
+  color: #e45430;
+}
+
+.capsule-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 4px;
 }
 
 /* Hide-timer toggle in top-right */
@@ -191,7 +249,7 @@ button:hover {
   right: 0;
   height: 100%;
   width: min(420px, 100%);
-  z-index: 50;
+  z-index: 3000;
   background: #fffaf2;
   transform: translateX(102%);
   transition: transform 220ms ease;
