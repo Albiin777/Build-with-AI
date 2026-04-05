@@ -577,6 +577,12 @@ async function onApplySettings(event) {
     event.preventDefault();
   }
 
+  // Snapshot old time-related values BEFORE building new config
+  const prevHours = state.config.hours;
+  const prevMinutes = state.config.minutes;
+  const prevSeconds = state.config.seconds;
+  const prevTimerType = state.config.timerType;
+
   const autoHostUploads = fields.autoHostUploads ? fields.autoHostUploads.value === "on" : state.config.autoHostUploads;
   const imageHostingApiKey = fields.imageHostingApiKey ? fields.imageHostingApiKey.value.trim() : state.config.imageHostingApiKey;
   const imageHostingProvider = fields.imageHostingProvider ? fields.imageHostingProvider.value : state.config.imageHostingProvider;
@@ -604,6 +610,11 @@ async function onApplySettings(event) {
     }
   }
 
+  const newHours   = fields.timerHours   ? clampNumber(fields.timerHours.value,   0, 999) : state.config.hours;
+  const newMinutes = fields.timerMinutes ? clampNumber(fields.timerMinutes.value, 0,  59) : state.config.minutes;
+  const newSeconds = fields.timerSeconds ? clampNumber(fields.timerSeconds.value, 0,  59) : state.config.seconds;
+  const newTimerType = fields.timerType  ? fields.timerType.value : state.config.timerType;
+
   state.config = {
     ...state.config,
     extraImages: resolvedExtraImages,
@@ -611,10 +622,10 @@ async function onApplySettings(event) {
     autoHostUploads,
     imageHostingApiKey,
     timerTitle: fields.timerTitle ? fields.timerTitle.value.trim() || defaultConfig.timerTitle : state.config.timerTitle,
-    timerType: fields.timerType ? fields.timerType.value : state.config.timerType,
-    hours: fields.timerHours ? clampNumber(fields.timerHours.value, 0, 999) : state.config.hours,
-    minutes: fields.timerMinutes ? clampNumber(fields.timerMinutes.value, 0, 59) : state.config.minutes,
-    seconds: fields.timerSeconds ? clampNumber(fields.timerSeconds.value, 0, 59) : state.config.seconds,
+    timerType: newTimerType,
+    hours: newHours,
+    minutes: newMinutes,
+    seconds: newSeconds,
     timerValueFont: fields.timerValueFont ? normalizeFontPreset(fields.timerValueFont.value, defaultConfig.timerValueFont) : state.config.timerValueFont,
     timerLabelFont: fields.timerLabelFont ? normalizeFontPreset(fields.timerLabelFont.value, defaultConfig.timerLabelFont) : state.config.timerLabelFont,
     timerTextColor: fields.timerTextColor ? normalizeHexColor(fields.timerTextColor.value, defaultConfig.timerTextColor) : state.config.timerTextColor,
@@ -631,7 +642,18 @@ async function onApplySettings(event) {
   };
 
   saveConfig();
-  resetTimerState();
+
+  // Only reset the timer if the duration or type actually changed
+  const timeChanged =
+    newHours !== prevHours ||
+    newMinutes !== prevMinutes ||
+    newSeconds !== prevSeconds ||
+    newTimerType !== prevTimerType;
+
+  if (timeChanged) {
+    resetTimerState();
+  }
+
   applyConfigToView();
   renderImageRows(state.config.extraImages);
   setPanelOpen(false);
