@@ -705,6 +705,11 @@ function handleDocumentClick(event) {
     return;
   }
 
+  // Also ignore clicks on the capsule Edit button
+  if (refs.capsuleEditBtn && refs.capsuleEditBtn.contains(target)) {
+    return;
+  }
+
   setPanelOpen(false);
 }
 

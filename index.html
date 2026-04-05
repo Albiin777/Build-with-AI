@@ -256,6 +256,11 @@
           return;
         }
 
+        var capsuleEditBtn = document.getElementById("capsuleEditBtn");
+        if (capsuleEditBtn && capsuleEditBtn.contains(event.target)) {
+          return;
+        }
+
         setOpen(false);
       });
 
