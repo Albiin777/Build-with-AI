@@ -33,11 +33,9 @@
 
   <button id="toggleSettingsBtn" class="settings-toggle" type="button" aria-expanded="false"
     aria-controls="settingsPanel" title="Customize View">
-    &#128065;
   </button>
 
   <button id="hideTimerBtn" class="hide-timer-toggle" type="button" title="Hide / Show Timer">
-    &#128065;
   </button>
 
   <aside id="settingsPanel" class="settings-panel" aria-hidden="true">
@@ -168,10 +166,16 @@
         </label>
       </div>
 
-      <label>
-        Border opacity
-        <input type="number" id="timerBorderOpacity" min="0" max="100" value="0" />
-      </label>
+      <div class="split-grid">
+        <label>
+          Border opacity
+          <input type="number" id="timerBorderOpacity" min="0" max="100" value="0" />
+        </label>
+        <label>
+          Title font size (px)
+          <input type="number" id="timerLabelSize" min="8" max="100" value="16" />
+        </label>
+      </div>
 
       <div class="split-grid">
         <label>

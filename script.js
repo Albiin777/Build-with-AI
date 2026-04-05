@@ -14,7 +14,8 @@ const defaultConfig = {
   timerLabelFont: "space",
   timerTextColor: "#000000",
   timerLabelColor: "#000000",
-  timerValueSize: 72,
+  timerValueSize: 150,
+  timerLabelSize: 16,
   timerBoxColor: "#000000",
   timerBoxOpacity: 0,
   timerBorderColor: "#ffffff",
@@ -78,6 +79,7 @@ const fields = {
   timerBoxOpacity: document.getElementById("timerBoxOpacity"),
   timerBorderColor: document.getElementById("timerBorderColor"),
   timerBorderOpacity: document.getElementById("timerBorderOpacity"),
+  timerLabelSize: document.getElementById("timerLabelSize"),
   timerDisplayMode: document.getElementById("timerDisplayMode"),
   offsetX: document.getElementById("offsetX"),
   offsetY: document.getElementById("offsetY")
@@ -128,7 +130,7 @@ function initialize() {
   if (refs.hideTimerBtn && refs.timerCard) {
     refs.hideTimerBtn.addEventListener("click", () => {
       const isHidden = refs.timerCard.classList.toggle("hidden");
-      refs.hideTimerBtn.style.opacity = isHidden ? "0.5" : "";
+      refs.hideTimerBtn.style.opacity = isHidden ? "0.3" : "";
       refs.hideTimerBtn.title = isHidden ? "Show Timer" : "Hide Timer";
     });
   }
@@ -221,6 +223,7 @@ function hydrateForm() {
   if (fields.timerBoxOpacity) fields.timerBoxOpacity.value = state.config.timerBoxOpacity;
   if (fields.timerBorderColor) fields.timerBorderColor.value = state.config.timerBorderColor;
   if (fields.timerBorderOpacity) fields.timerBorderOpacity.value = state.config.timerBorderOpacity;
+  if (fields.timerLabelSize) fields.timerLabelSize.value = state.config.timerLabelSize;
   if (fields.timerDisplayMode) fields.timerDisplayMode.value = state.config.timerDisplayMode;
   if (fields.offsetX) fields.offsetX.value = state.config.offsetX;
   if (fields.offsetY) fields.offsetY.value = state.config.offsetY;
@@ -458,6 +461,7 @@ function applyTimerAppearance() {
   refs.timerLabel.style.color = state.config.timerLabelColor;
   refs.timerValue.style.color = state.config.timerTextColor;
   refs.timerValue.style.fontSize = `${clampNumber(state.config.timerValueSize, 28, 220)}px`;
+  refs.timerLabel.style.fontSize = `${clampNumber(state.config.timerLabelSize, 8, 100)}px`;
 }
 
 function renderGallery() {
@@ -560,6 +564,7 @@ async function onApplySettings(event) {
     timerBoxOpacity: fields.timerBoxOpacity ? clampNumber(fields.timerBoxOpacity.value, 0, 100) : state.config.timerBoxOpacity,
     timerBorderColor: fields.timerBorderColor ? normalizeHexColor(fields.timerBorderColor.value, defaultConfig.timerBorderColor) : state.config.timerBorderColor,
     timerBorderOpacity: fields.timerBorderOpacity ? clampNumber(fields.timerBorderOpacity.value, 0, 100) : state.config.timerBorderOpacity,
+    timerLabelSize: fields.timerLabelSize ? clampNumber(fields.timerLabelSize.value, 8, 100) : state.config.timerLabelSize,
     timerDisplayMode: fields.timerDisplayMode ? fields.timerDisplayMode.value : state.config.timerDisplayMode,
     offsetX: fields.offsetX ? clampNumber(fields.offsetX.value, -500, 500) : state.config.offsetX,
     offsetY: fields.offsetY ? clampNumber(fields.offsetY.value, -500, 500) : state.config.offsetY
@@ -592,6 +597,7 @@ function copyShareLink() {
     timerBoxOpacity: state.config.timerBoxOpacity,
     timerBorderColor: state.config.timerBorderColor,
     timerBorderOpacity: state.config.timerBorderOpacity,
+    timerLabelSize: state.config.timerLabelSize,
     timerDisplayMode: state.config.timerDisplayMode,
     offsetX: state.config.offsetX,
     offsetY: state.config.offsetY
