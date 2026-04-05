@@ -12,8 +12,8 @@ const defaultConfig = {
   seconds: 0,
   timerValueFont: "bebas",
   timerLabelFont: "space",
-  timerTextColor: "#ffffff",
-  timerLabelColor: "#d1d5db",
+  timerTextColor: "#000000",
+  timerLabelColor: "#000000",
   timerValueSize: 72,
   timerBoxColor: "#000000",
   timerBoxOpacity: 0,
@@ -501,9 +501,10 @@ function placeTimerCard() {
 
   refs.timerCard.style.position = "fixed";
   refs.timerCard.style.left = "50%";
-  refs.timerCard.style.top = "50%";
+  refs.timerCard.style.top = "auto";
+  refs.timerCard.style.bottom = "20px";
   refs.timerCard.style.right = "auto";
-  refs.timerCard.style.transform = `translate(calc(-50% + ${toNumber(state.config.offsetX)}px), calc(-50% + ${toNumber(state.config.offsetY)}px))`;
+  refs.timerCard.style.transform = `translate(calc(-50% + ${toNumber(state.config.offsetX)}px), ${-toNumber(state.config.offsetY)}px)`;
   document.body.appendChild(refs.timerCard);
 }
 
