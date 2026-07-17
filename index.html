@@ -8,15 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&family=Orbitron:wght@500;700&family=Oswald:wght@400;600&family=Montserrat:wght@700;900&family=Playfair+Display:wght@700;900&family=Syncopate:wght@700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&family=Orbitron:wght@500;700&family=Oswald:wght@400;600&family=Montserrat:wght@700;900&family=Playfair+Display:wght@700;900&family=Syncopate:wght@700&family=Cinzel:wght@400;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260405c" />
+  <link rel="stylesheet" href="styles.css?v=20260717g" />
 </head>
 
 <body>
   <div class="timer-card" id="timerCard" role="status" aria-live="polite">
     <p class="timer-label" id="timerLabel">Hackathon Timer</p>
     <p class="timer-value" id="timerValue">00:00:00</p>
+    <img id="sponsorLogo" class="sponsor-logo hidden" src="" alt="Sponsor logo" />
     <div class="timer-actions hidden" aria-hidden="true">
       <button id="startPauseBtn" type="button">Start</button>
       <button id="resetBtn" type="button" class="ghost">Reset</button>
@@ -24,7 +25,6 @@
   </div>
 
   <main>
-
     <section class="gallery-shell" id="galleryShell">
       <div class="inline-timer-mount" id="inlineTimerMount"></div>
       <div id="galleryList" class="gallery-list"></div>
@@ -35,12 +35,31 @@
     aria-controls="settingsPanel" title="Customize View">
   </button>
 
-  <button id="hideTimerBtn" class="hide-timer-toggle" type="button" title="Hide / Show Timer">
+  <button id="hideTimerBtn" class="hide-timer-toggle" type="button" title="Hide Timer" aria-label="Hide Timer">
+    <!-- eye open -->
+    <svg class="eye-open" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+    <!-- eye slash -->
+    <svg class="eye-slash hidden" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
   </button>
 
+  <!-- Master capsule: Start | Pause | Reset | Edit -->
   <div id="masterCapsule" class="master-capsule">
-    <button id="capsuleStartBtn" class="capsule-btn primary" title="Start / Pause Timer">
+    <button id="capsuleStartBtn" class="capsule-btn primary" title="Start Timer">
       Start
+    </button>
+    <button id="capsulePauseBtn" class="capsule-btn primary hidden" title="Pause Timer">
+      Pause
+    </button>
+    <div class="capsule-divider"></div>
+    <button id="capsuleResetBtn" class="capsule-btn secondary" title="Reset Timer">
+      Reset
     </button>
     <div class="capsule-divider"></div>
     <button id="capsuleEditBtn" class="capsule-btn secondary" title="Open Settings">
@@ -54,7 +73,7 @@
       <button id="closeSettingsBtn" type="button" class="ghost">Close</button>
     </div>
 
-    <form id="settingsForm">
+    <form id="settingsForm" novalidate>
 
       <div class="split-grid">
         <label>
@@ -78,7 +97,28 @@
       </label>
 
       <div id="extraImagesContainer" class="images-builder"></div>
-      <button type="button" id="addImageBtn" class="ghost">Add image</button>
+      <button type="button" id="addImageBtn" class="ghost">Add media (image/video)</button>
+
+      <hr />
+
+      <p class="settings-section-label">🎤 Sponsor Slideshow</p>
+
+      <div class="split-grid">
+        <label>
+          Enable slideshow
+          <select id="slideshowEnabled">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+          </select>
+        </label>
+        <label>
+          Secs per sponsor
+          <input type="number" id="slideshowDuration" min="1" max="300" value="5" />
+        </label>
+      </div>
+
+      <div id="sponsorsContainer" class="images-builder"></div>
+      <button type="button" id="addSponsorBtn" class="ghost">+ Add Sponsor</button>
 
       <hr />
 
@@ -139,6 +179,7 @@
           Timer value font
           <select id="timerValueFont">
             <option value="bebas">Bebas Neue</option>
+            <option value="cinzel">Cinzel</option>
             <option value="orbitron">Orbitron</option>
             <option value="oswald">Oswald</option>
             <option value="space">Space Grotesk</option>
@@ -151,6 +192,7 @@
           Timer title font
           <select id="timerLabelFont">
             <option value="space">Space Grotesk</option>
+            <option value="cinzel">Cinzel</option>
             <option value="oswald">Oswald</option>
             <option value="bebas">Bebas Neue</option>
             <option value="orbitron">Orbitron</option>
@@ -217,7 +259,8 @@
         return;
       }
 
-      function applySettings() {
+      function applySettings(e) {
+        if (e && e.preventDefault) { e.preventDefault(); }
         if (typeof window.applySettingsFromPanel === "function") {
           window.applySettingsFromPanel();
           return;
@@ -232,7 +275,6 @@
         panel.classList.toggle("open", next);
         panel.setAttribute("aria-hidden", String(!next));
         openBtn.setAttribute("aria-expanded", String(next));
-        // Remove openBtn.hidden = next to keep button visible
       }
 
       openBtn.addEventListener("click", function () {
@@ -245,6 +287,12 @@
 
       if (applyBtn) {
         applyBtn.addEventListener("click", applySettings);
+      }
+
+      if (form) {
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+        });
       }
 
       document.addEventListener("click", function (event) {
@@ -271,7 +319,95 @@
       });
     })();
   </script>
-  <script src="script.js?v=20260405c"></script>
+  <script>
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+      alert("Error: " + msg + "\nLine: " + lineNo + "\n" + (error && error.stack ? error.stack : ''));
+      return false;
+    };
+    window.onunhandledrejection = function(event) {
+      alert("Unhandled Promise Rejection: " + event.reason);
+    };
+  </script>
+  <script src="script.js?v=20260717x6"></script>
+  <script>
+    // Guarantee capsule buttons are wired up, even if script.js has issues
+    (function() {
+      var startBtn  = document.getElementById('capsuleStartBtn');
+      var pauseBtn  = document.getElementById('capsulePauseBtn');
+      var resetBtn  = document.getElementById('capsuleResetBtn');
+      var editBtn   = document.getElementById('capsuleEditBtn');
+
+      function setRunning(running) {
+        if (startBtn) startBtn.classList.toggle('hidden', running);
+        if (pauseBtn) pauseBtn.classList.toggle('hidden', !running);
+      }
+
+      if (startBtn) {
+        startBtn.addEventListener('click', function() {
+          if (typeof onStart === 'function') { onStart(); }
+          else if (typeof onStartPause === 'function') { onStartPause(); }
+          setRunning(true);
+        });
+      }
+
+      if (pauseBtn) {
+        pauseBtn.addEventListener('click', function() {
+          if (typeof onPause === 'function') { onPause(); }
+          else if (typeof onStartPause === 'function') { onStartPause(); }
+          setRunning(false);
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+          if (typeof onResetTimer === 'function') { onResetTimer(); }
+          setRunning(false);
+        });
+      }
+
+      if (editBtn) {
+        editBtn.addEventListener('click', function() {
+          if (typeof setPanelOpen === 'function') { setPanelOpen(true); }
+          else {
+            var panel = document.getElementById('settingsPanel');
+            if (panel) { panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); }
+          }
+        });
+      }
+
+      // Hide/show timer circle button
+      var hideBtn   = document.getElementById('hideTimerBtn');
+      var timerCard = document.getElementById('timerCard');
+      if (hideBtn && timerCard) {
+        hideBtn.addEventListener('click', function() {
+          var isHidden = timerCard.classList.toggle('hidden');
+          hideBtn.style.opacity = isHidden ? '0.4' : '0.7';
+          hideBtn.title = isHidden ? 'Show Timer' : 'Hide Timer';
+          hideBtn.setAttribute('aria-label', isHidden ? 'Show Timer' : 'Hide Timer');
+          var eyeOpen  = hideBtn.querySelector('.eye-open');
+          var eyeSlash = hideBtn.querySelector('.eye-slash');
+          if (eyeOpen)  eyeOpen.classList.toggle('hidden', isHidden);
+          if (eyeSlash) eyeSlash.classList.toggle('hidden', !isHidden);
+        });
+      }
+
+      // Add media row button
+      var addImageBtn = document.getElementById('addImageBtn');
+      if (addImageBtn) {
+        addImageBtn.addEventListener('click', function() {
+          if (typeof onAddImageRow === 'function') { onAddImageRow(); }
+        });
+      }
+
+      // Add sponsor row button
+      var addSponsorBtn = document.getElementById('addSponsorBtn');
+      if (addSponsorBtn) {
+        addSponsorBtn.addEventListener('click', function() {
+          if (typeof onAddSponsorRow === 'function') { onAddSponsorRow(); }
+        });
+      }
+    })();
+  </script>
 </body>
 
 </html>

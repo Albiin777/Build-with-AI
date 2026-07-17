@@ -64,7 +64,7 @@ main {
   padding: 0.9rem;
   box-shadow: none;
   text-align: center;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .timer-label {
@@ -167,7 +167,7 @@ button:hover {
   z-index: 2005;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(25, 64, 30, 0.319);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -181,7 +181,7 @@ button:hover {
 
 .master-capsule:hover {
   opacity: 1;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(104, 130, 106, 0.722);
 }
 
 .capsule-btn {
@@ -220,27 +220,27 @@ button:hover {
   top: 12px;
   right: 12px;
   z-index: 2000;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border-radius: 50%;
-  background: rgba(228, 84, 48, 0.2);
-  color: #f8f4f4;
-  font-size: 13px;
-  line-height: 28px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.0);
+  background: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
-  opacity: 0.65;
+  opacity: 0.7;
   pointer-events: auto;
+  cursor: pointer;
 }
 
 .hide-timer-toggle:hover {
   opacity: 1;
-  background: rgba(216, 173, 173, 0.7);
-  color: rgb(255, 165, 165);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .settings-panel {
@@ -357,4 +357,162 @@ hr {
   .panel-actions {
     flex-wrap: wrap;
   }
+}
+
+.video-wrapper {
+  position: relative;
+  background: #000;
+  display: block;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-controls-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.8rem 1.4rem;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.video-wrapper:hover .video-controls-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.control-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-btn svg {
+  display: block;
+}
+
+.control-btn.hidden {
+  display: none !important;
+}
+
+/* ── Sponsor Slideshow ───────────────────────── */
+.sponsor-slideshow {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.65s ease;
+}
+
+.sponsor-slideshow.ss-visible {
+  opacity: 1;
+}
+
+.sponsor-slideshow.ss-hidden {
+  opacity: 0;
+}
+
+.sponsor-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  padding: 2.8rem 4rem;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+  animation: sponsorPop 0.5s cubic-bezier(0.22, 0.91, 0.36, 1) both;
+}
+
+@keyframes sponsorPop {
+  from {
+    transform: scale(0.88);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.sponsor-logo {
+  max-width: 300px;
+  max-height: 170px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.sponsor-logo[src=""],
+.sponsor-logo:not([src]) {
+  display: none;
+}
+
+.sponsor-name {
+  margin: 0;
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Sponsor row in settings ─────────────────── */
+.sponsor-row {
+  display: grid;
+  gap: 0.5rem;
+  border: 1px solid rgba(24, 34, 45, 0.15);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem;
+}
+
+/* Settings section label */
+.settings-section-label {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
